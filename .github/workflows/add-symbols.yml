@@ -1,0 +1,42 @@
+name: Add Unicode Symbols
+
+on:
+  workflow_dispatch:   # allows manual trigger
+  push:
+    paths:
+      - "fonts/**"
+
+jobs:
+  generate-symbols:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install font tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install fonttools ufoLib2
+
+      - name: Add ℅ and ℀ glyphs
+        run: |
+          echo "Generating glyphs for U+2105 (℅) and U+2100 (℀)..."
+          # Example: use fontTools to append glyphs
+          python scripts/add_symbols.py fonts/Barlow-Regular.ttf
+
+      - name: Validate font build
+        run: |
+          python -m fontTools.ttLib fonts/Barlow-Regular.ttf
+          echo "Validation complete."
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-fonts
+          path: fonts/*.ttf
