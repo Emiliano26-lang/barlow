@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build fonts
-        run: fontmake -g sources/Barlow.glyphs -o ttf --output-dir build/fonts
+        run: make build
 
       - name: Verify glyph ∰ exists
         run: python scripts/check_glyph.py "∰"
