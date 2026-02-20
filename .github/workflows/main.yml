@@ -17,8 +17,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install fontmake
-        run: pip install fontmake
+      - name: Install dependencies
+        run: |
+          pip install fontmake==3.7.1 fonttools==4.53.1
 
       - name: Build fonts
         run: |
