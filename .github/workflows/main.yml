@@ -1,4 +1,4 @@
-name: Add Glyph to Font
+name: Build Fonts
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,14 +19,36 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install fontmake==3.7.1 fonttools==4.53.1
+        run: pip install -r requirements.txt
 
       - name: Build fonts
-        run: |
-          fontmake -g sources/Barlow.glyphs -o ttf --output-dir fonts/ttf
-          fontmake -g sources/Barlow.glyphs -o otf --output-dir fonts/otf
+        run: python scripts/build_fonts.py
 
       - name: Verify glyph ∰ exists
-        run: |
-          python scripts/check_glyph.py U+2230 fonts/ttf/*.ttf || echo "Glyph check skipped"
+        run: python scripts/check_glyph.py "∰"
+
+      # NEW: Upload artifacts
+      - name: Upload built fonts
+        uses: actions/upload-artifact@v4
+        with:
+          name: barlow-fonts
+          path: build/fonts/**/*.ttf
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download fonts artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: barlow-fonts
+          path: release/fonts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/fonts/**/*.ttf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
