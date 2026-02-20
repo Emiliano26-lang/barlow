@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p fonts/ttf
           if [ -f scripts/add_hairline_weight.py ]; then
-            python scripts/add_hairline_weight.py fonts/source.ttf fonts/ttf/barlowhairline.ttf
+            python scripts/add_hairline_weight.py fonts/ttf/Barlow-Thin.ttf fonts/ttf/barlowhairline.ttf
           else
             echo "No add_hairline_weight.py script found, skipping."
           fi
