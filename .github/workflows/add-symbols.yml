@@ -19,12 +19,12 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install font tools
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install fonttools ufoLib2
+          pip install -r requirements.txt
 
-      - name: Add ℅ and ℀ glyphs
+      - name: Add ℅ and ⌀ glyphs
         run: |
           python - <<'EOF'
           from fontTools.ttLib import TTFont
@@ -35,7 +35,7 @@ jobs:
           # Add Unicode mappings
           cmap_table = font["cmap"].tables[0].cmap
           cmap_table[0x2105] = "uni2105"  # ℅
-          cmap_table[0x2100] = "uni2100"  # ℀
+          cmap_table[0x2300] = "uni2c64"  # Ɽ
 
           # Save back to the same location
           font.save("fonts/Barlow-Regular.ttf")
@@ -53,7 +53,3 @@ jobs:
         with:
           name: updated-fonts
           path: fonts/*.ttf
-          
-        - name: Install dependencies
-        run: pip install -r requirements.txt
-
