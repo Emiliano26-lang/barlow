@@ -21,8 +21,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install fontmake
+        run: pip install fontmake
+
       - name: Build fonts
-        run: make build
+        run: fontmake -g sources/Barlow.glyphs -o ttf --output-dir build/fonts
 
       - name: Verify glyph ∰ exists
         run: python scripts/check_glyph.py "∰"
