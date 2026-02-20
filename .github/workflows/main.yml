@@ -1,13 +1,12 @@
-name: Add Hairline weight
+name: Build Font
 
 on:
   push:
-    paths:
-      - "fonts/**"
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  build-hairline:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,24 +15,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install fontmake
+        run: pip install fontmake
+
+      - name: Build fonts
         run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          fontmake -g sources/Barlow.glyphs -o ttf --output-dir fonts/ttf
+          fontmake -g sources/Barlow.glyphs -o otf --output-dir fonts/otf
 
-      - name: Generate Hairline weight
+      - name: Verify glyph ∰ exists
         run: |
-          mkdir -p fonts/ttf
-          if [ -f scripts/add_hairline_weight.py ]; then
-            python scripts/add_hairline_weight.py fonts/ttf/Barlow-Thin.ttf fonts/ttf/barlowhairline.ttf
-          else
-            echo "No add_hairline_weight.py script found, skipping."
-          fi
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hairline-font
-          path: fonts/ttf/barlowhairline.ttf
+          python scripts/check_glyph.py U+2230 fonts/ttf/*.ttf
