@@ -1,15 +1,25 @@
+name: Add Glyph to Font
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install fontmake==3.7.1 fonttools==4.53.1
+        run: |
+          pip install fontmake==3.7.1 fonttools==4.53.1
 
       - name: Build fonts
         run: |
@@ -17,4 +27,5 @@ jobs:
           fontmake -g sources/Barlow.glyphs -o otf --output-dir fonts/otf
 
       - name: Verify glyph ∰ exists
-        run: python scripts/check_glyph.py U+2230 fonts/ttf/*.ttf
+        run: |
+          python scripts/check_glyph.py U+2230 fonts/ttf/*.ttf
