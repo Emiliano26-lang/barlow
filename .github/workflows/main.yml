@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build fonts
-        run: python scripts/build_fonts.py
+        run: python tools/build.py
 
       - name: Verify glyph ∰ exists
         run: python scripts/check_glyph.py "∰"
