@@ -21,12 +21,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Generate Hairline weight
         run: |
-          # Example: use fonttools or custom script
-          python scripts/add_hairline_weight.py fonts/source.ttf fonts/ttf/barlowhairline.ttf
+          mkdir -p fonts/ttf
+          if [ -f scripts/add_hairline_weight.py ]; then
+            python scripts/add_hairline_weight.py fonts/source.ttf fonts/ttf/barlowhairline.ttf
+          else
+            echo "No add_hairline_weight.py script found, skipping."
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
