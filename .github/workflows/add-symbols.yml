@@ -26,9 +26,22 @@ jobs:
 
       - name: Add ℅ and ℀ glyphs
         run: |
-          echo "Generating glyphs for U+2105 (℅) and U+2100 (℀)..."
-          # Example: use fontTools to append glyphs
-          python scripts/add_symbols.py fonts/Barlow-Regular.ttf
+          python - <<'EOF'
+          from fontTools.ttLib import TTFont
+
+          # Load the font
+          font = TTFont("fonts/Barlow-Regular.ttf")
+
+          # Add Unicode mappings
+          cmap_table = font["cmap"].tables[0].cmap
+          cmap_table[0x2105] = "uni2105"  # ℅
+          cmap_table[0x2100] = "uni2100"  # ℀
+
+          # Save back to the same location
+          font.save("fonts/Barlow-Regular.ttf")
+
+          print("Symbols added successfully.")
+          EOF
 
       - name: Validate font build
         run: |
